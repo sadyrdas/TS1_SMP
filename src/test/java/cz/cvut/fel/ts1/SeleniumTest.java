@@ -58,42 +58,37 @@ public class SeleniumTest {
         driver.close();
     }
 
+    @ParameterizedTest
+    @CsvFileSource(resources = "/cz.cvut.fel.ts1/forSignUP.csv")
     @Test
     @Order(1)
-    public void Sign_in() throws InterruptedIOException, IOException, CsvValidationException {
+    public void Sign_in() throws InterruptedIOException, IOException, CsvValidationException, InterruptedException {
         HomePage homePage = new HomePage(driver);
         homePage.clickToSignUP();
-        SignInWindow signInWindow = new SignInWindow(driver);
-        signInWindow.setEmail("dastangta29@gmail.com");
-        signInWindow.setPassword("obelom2542");
-        signInWindow.clickButton();
-        homePage.clickToProf();
-        assertEquals("Dastan Sadyraliyev", driver.findElement(By.xpath("//*[@id=\"loged-box\"]/div/div/div[1]/span")).getText());
-
-//        CSVReader reader = new CSVReader(new FileReader("src/test/java/cz/cvut/fel/ts1/forSignIn.csv"));
-//        String[] cell;
-//        while ((cell = reader.readNext()) != null) {
-//            for (int i = 0; i < 1; i++) {
-//                String name = cell[i];
-//                String password = cell[i + 1];
-//                SignInWindow signInWindow = new SignInWindow(driver);
-//                signInWindow.setEmail(name);
-//                signInWindow.setPassword(password);
-//                signInWindow.clickButton();
-//                homePage.clickToProf();
+        CSVReader reader = new CSVReader(new FileReader("src/test/resources/cz.cvut.fel.ts1/forSignUP.csv"));
+        String[] cell;
+        while ((cell = reader.readNext()) != null) {
+            for (int i = 0; i < 1; i++) {
+                String name = cell[i];
+                String password = cell[i + 1];
+                SignInWindow signInWindow = new SignInWindow(driver);
+                signInWindow.setEmail(name);
+                signInWindow.setPassword(password);
+                signInWindow.clickButton();
+                homePage.clickToProf();
+                Thread.sleep(5000);
+                assertEquals("Dastan Sadyraliyev", driver.findElement(By.xpath("//*[@id=\"loged-box\"]/div/div/div[1]/span")).getText());
 
 
-
-
-
-
-}
+            }
+        }
+    }
 
     @Test
     @Order(2)
     public void Aktualizovat() throws IOException, CsvValidationException {
         homePage = new HomePage(driver);
-        SignInWindow signInWindow = homePage.clickToSignUP().signIn("dastangta29@gmail.com", "obelom2542");
+        SignInWindow signInWindow = homePage.clickToSignUP().signIn("dastangta29@gmail.com", "obelom2542a");
         ProfilePage profilePage = homePage.clickToProfile();
         profilePage.actualizace("Technicka 2", "Praha", "169 00");
         assertEquals("Změna osobních údajů proběhla uspěšně", driver.findElement(By.xpath("//*[@id=\"msgSpace\"]/div[1]")).getText());
@@ -102,7 +97,7 @@ public class SeleniumTest {
     @Order(3)
     public void detalniSearch(){
         homePage = new HomePage(driver);
-        SignInWindow signInWindow = homePage.clickToSignUP().signIn("dastangta29@gmail.com", "obelom2542");
+        SignInWindow signInWindow = homePage.clickToSignUP().signIn("dastangta29@gmail.com", "obelom2542a");
         driver.navigate().refresh();
         SearchPage searchPage = homePage.makeSearch();
         assertEquals("Mobily, Nositelná elektronika", driver.findElement(By.xpath("//*[@id=\"pbL\"]/div[5]/div/div/div[2]/h1")).getText());
