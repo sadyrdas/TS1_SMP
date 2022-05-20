@@ -35,6 +35,10 @@ public class ZmenaHesla {
         newPassAgainInput.sendKeys(password2);
     }
 
+    public void clickChange() {
+        zmenaButton.click();
+    }
+
     public void setOk(){
         ok.click();
     }

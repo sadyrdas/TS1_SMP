@@ -59,6 +59,10 @@ public class BasketPage {
         vyberKraj.click();
     }
 
+    public void setStreetForm(String st) {
+
+    }
+
     public void setPraha(){
         praha.click();
     }

@@ -30,6 +30,10 @@ public class ProfilePage {
         PageFactory.initElements(driver, this);
     }
 
+    public void setActButton() {
+        actButton.click();
+    }
+
     public void setActCity(String city) {
         actCity.click();
         actCity.clear();

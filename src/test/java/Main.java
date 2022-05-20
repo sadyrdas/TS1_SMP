@@ -14,7 +14,7 @@ public class Main {
 
         SeleniumTest seleniumTest = new SeleniumTest();
         seleniumTest.setup();
-        seleniumTest.zmenitheslo();
+        seleniumTest.doprava();
 
     }
 }

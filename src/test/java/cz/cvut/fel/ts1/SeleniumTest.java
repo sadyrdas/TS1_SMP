@@ -83,15 +83,31 @@ public class SeleniumTest {
             }
         }
     }
-
+    @ParameterizedTest
+    @CsvFileSource(resources = "/cz.cvut.fel.ts1/forAktualizace.csv")
     @Test
     @Order(2)
-    public void Aktualizovat() throws IOException, CsvValidationException {
+    public void Aktualizovat() throws IOException, CsvValidationException, InterruptedException {
         homePage = new HomePage(driver);
         SignInWindow signInWindow = homePage.clickToSignUP().signIn("dastangta29@gmail.com", "obelom2542a");
         ProfilePage profilePage = homePage.clickToProfile();
-        profilePage.actualizace("Technicka 2", "Praha", "169 00");
-        assertEquals("Změna osobních údajů proběhla uspěšně", driver.findElement(By.xpath("//*[@id=\"msgSpace\"]/div[1]")).getText());
+        CSVReader reader = new CSVReader(new FileReader("src/test/resources/cz.cvut.fel.ts1/forAktualizace.csv"));
+        String[] cell;
+        while ((cell = reader.readNext()) != null) {
+            for (int i = 0; i < 1; i++) {
+                String street = cell[i];
+                String city = cell[i + 1];
+                String PSC = cell[i + 2];
+                ProfilePage profilePage1 = new ProfilePage(driver);
+                profilePage1.setActStreet(street);
+                profilePage1.setActCity(city);
+                profilePage1.setActPSC(PSC);
+                profilePage1.setActButton();
+                Thread.sleep(5000);
+
+                assertEquals("Změna osobních údajů proběhla uspěšně", driver.findElement(By.xpath("//*[@id=\"msgSpace\"]/div[1]")).getText());
+            }
+        }
     }
     @Test
     @Order(3)
@@ -111,7 +127,7 @@ public class SeleniumTest {
 
     @Test
     @Order(4)
-    public void doprava() {
+    public void doprava() throws InterruptedException {
         detalniSearch();
         BasketPage basketPage = homePage.toBasket();
         basketPage.setBtnDoprava();
@@ -123,40 +139,37 @@ public class SeleniumTest {
         basketPage.scrollToBtn();
         basketPage.setBtnToForm();
         basketPage.setForm("Olympijska 1902/5", "Praha", "" );
+        Thread.sleep(5000);
         assertEquals("povinné údaje", driver.findElement(By.xpath("//*[@id=\"frm-select-addresss\"]/div/div/div[2]/div[4]/div[3]/div[2]/span[2]")).getText());
 
     }
 
-//    @ParameterizedTest
-//    @CsvFileSource(resources = "src/test/java/cz/cvut/fel/ts1/forHeslo.csv")
+    @ParameterizedTest
+    @CsvFileSource(resources = "/cz.cvut.fel.ts1/forHeslo.csv")
     @Test
     @Order(5)
     public void zmenitheslo() throws CsvValidationException, IOException, InterruptedException {
         HomePage homePage = new HomePage(driver);
         SignInWindow signInWindow = homePage.clickToSignUP().signIn("dastangta29@gmail.com", "obelom2542a");
         driver.navigate().refresh();
-        ZmenaHesla zmenaHesla = homePage.clicToPage();
-        zmenaHesla.zmenitHeslo("obelom2542a", "obelom2542a", "obelom2542");
-        Thread.sleep(4000);
-        assertEquals("Nové heslo je potřeba zadat dvakrát" , driver.findElement(By.xpath("//*[@id=\"msgSpace\"]/div[1]")).getText());
+
+        CSVReader reader = new CSVReader(new FileReader("src/test/resources/cz.cvut.fel.ts1/forHeslo.csv"));
+        String[] cell;
+        while ((cell = reader.readNext())!=null){
+            for (int i = 0; i < 1; i++) {
+                String oldPass = cell[i];
+                String newPass = cell[i+1];
+                ZmenaHesla zmenaHesla = homePage.clicToPage();
+                zmenaHesla.setOldPassInput(oldPass);
+                zmenaHesla.setNewPassInput(newPass);
+                zmenaHesla.setNewPassAgainInput(newPass);
+                zmenaHesla.clickChange();
+                Thread.sleep(4000);
+                assertEquals("Staré heslo nesouhlasí" , driver.findElement(By.xpath("//*[@id=\"msgSpace\"]/div[1]")).getText());
+            }
 
 
-
-        //zmenaHesla.setOk();
-
-//        CSVReader reader = new CSVReader(new FileReader("src/test/java/cz/cvut/fel/ts1/forHeslo.csv"));
-//        String[] cell;
-//        while ((cell = reader.readNext())!=null){
-//            for (int i = 0; i < 1; i++) {
-//                String oldPass = cell[i];
-//                String newPass = cell[i+1];
-//                zmenaHesla.setOldPassInput(oldPass);
-//                zmenaHesla.setNewPassInput(newPass);
-//                zmenaHesla.setNewPassAgainInput(newPass);
-//            }
-//
-
-//        }
+        }
     }
 
 }
